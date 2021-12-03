@@ -20,3 +20,7 @@ class Test1:
     assertEquals((22, 9), decode(sampleInput))
 
 
+class Test2:
+  @Test def t1(): Unit = 
+    assertEquals((23, 10), decode2(sampleInput))
+
