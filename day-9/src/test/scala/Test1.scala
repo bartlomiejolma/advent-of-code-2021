@@ -12,3 +12,6 @@ val input = """2199943210
 class Test1:
   @Test def t1(): Unit = 
     assertEquals(15, partOne(input))
+
+  @Test def t2(): Unit = 
+    assertEquals(1134, partTwo(input))
