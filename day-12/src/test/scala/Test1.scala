@@ -14,3 +14,6 @@ b-end"""
 class Test1:
   @Test def t1(): Unit = 
     assertEquals(10, partOne(input))
+
+  @Test def t2(): Unit = 
+    assertEquals(36, partTwo(input))
