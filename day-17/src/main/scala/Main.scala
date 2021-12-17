@@ -55,20 +55,25 @@ def run(boundaries: Boundaries)(state: State, maxY: Int): Option[Int] = {
 }
 
 
-def bruteForce(boundaries: Boundaries) : Int = {
+def bruteForce(boundaries: Boundaries) : IndexedSeq[Int] = {
   
-  (0 to 300).map(
-    xv => (0 to 300).map(
+  (-0 to 300).map(
+    xv => (-300 to 300).map(
       yv => run(boundaries)(State(0, 0, xv, yv), 0)
     )
-  ).flatten.flatten.max
+  ).flatten.flatten
 }
 
 def partOne(boundaries: Boundaries) : Int = {
-  bruteForce(boundaries)
+  bruteForce(boundaries).max
 }
 
+
+def partTwo(boundaries: Boundaries) : Int = {
+  bruteForce(boundaries).size
+}
 @main def hello: Unit = 
   val boundaries = Boundaries(217, 240, -126, -69)
   println(partOne(boundaries))
+  println(partTwo(boundaries))
 

@@ -25,5 +25,8 @@ class Test1:
     val start = State(x0, y0, 6, 9)
     assertEquals(Some(45), run(boundaries)(start, 0))
   
-  @Test def tRunBruteForce(): Unit = 
-    assertEquals(45, bruteForce(boundaries))
+  @Test def t1(): Unit = 
+    assertEquals(45, partOne(boundaries))
+
+  @Test def t2(): Unit = 
+    assertEquals(112, partTwo(boundaries))
