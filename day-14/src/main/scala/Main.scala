@@ -2,39 +2,52 @@ import scala.io.Source
 
 val filename = "input.txt"
 
-def parseRule(lineText: String): ((Char, Char), Char) = 
+def parseRule(lineText: String): (Sequence, Char) = 
   val elements::newOne = lineText.split(" -> ").toList
   
   ((elements(0).toChar, elements(1).toChar), newOne.head(0).toChar)
 
 
+type Sequence = (Char, Char)
+type Template = Map[Sequence, Long]
+type Rules = Map[Sequence, Char]
 
-def parseInput(input: String): (Array[Char], Map[(Char, Char), Char]) = {
+def parseInput(input: String): (Template, Rules) = {
   val head::tail::rest = input.split("\n\n").toList
-  val template = head.toSeq.map(_.toChar).toArray
+  val template = (head.toSeq.map(_.toChar).toArray
+    .sliding(2)
+    .map { case Array(f1,f2) => (f1,f2) }
+    .toArray
+    :+ (head.last, ' '))
+    .groupBy(identity).mapValues(_.length.toLong).toMap
   val rules = tail.split("\n").map(parseRule)
   rules.foreach(println)
   (template , rules.toMap) 
 }
 
-def step(rules: Map[(Char, Char), Char])(template: Array[Char], idx: Int): Array[Char] = {
-  template.
-  sliding(2).map(s =>
-      rules.get((s(0), s(1))) match {
-        case Some(c) => Array[Char](s(0), c)
-        case None => Array[Char](s(0))
-      }).flatten.toArray :+ template.last
+def step(rules: Rules)(template: Template, idx: Int): Template = {
+  val templateLength = template.size
+  println(s"step $idx length: $templateLength")
+  template.flatten { case (sequence, c) =>
+    rules.get(sequence) match {
+      case Some(d) => Array((sequence(0), d) -> c, (d, sequence(1)) -> c)
+      case None => Array(sequence -> c)
+    }
+  }
+  .groupMapReduce(x => x._1)(_._2)(_ + _)
+  .toMap
 }
+def calculateResult(polymer: Template): Long =
+  polymer.foreach(println)
 
-def calculateResult(polymer: Array[Char]): Long =
-  val counts = polymer.groupBy(identity).mapValues(_.length).map(_._2)
+  val counts = polymer.groupBy(_._1._1).mapValues(_.map(_._2).sum).values
   counts.max - counts.min
 
-def partOne(text: String, counts: Int = 10): Long = 
 
+def partOne(text: String, counts: Int = 10): Long = 
   val (template, rules) = parseInput(text)
+  template.foreach(println)
   val polymer = (1 to counts).foldLeft(template)(step(rules))
-  println(polymer.mkString)
   calculateResult(polymer)
 
 
