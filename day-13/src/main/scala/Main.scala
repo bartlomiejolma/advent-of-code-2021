@@ -55,12 +55,18 @@ def fold(paper: Paper, instruction: Instruction) : Paper =
 def partOne(text: String): Int = {
   val (paper, instructions) = parseInput(text)
   val foldedPaper = fold(paper, instructions.head)
-  println(visualizePaper(paper))
 
   foldedPaper.size
 }
 
+def partTwo(text: String): Int = {
+  val (paper, instructions) = parseInput(text)
+  val foldedPaper = instructions.foldLeft(paper)(fold)
+  println(visualizePaper(foldedPaper))
+  foldedPaper.size
+}
   
 @main def hello: Unit = 
   val text = Source.fromFile(filename).mkString
   println(partOne(text))
+  println(partTwo(text))
