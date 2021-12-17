@@ -55,16 +55,20 @@ def run(boundaries: Boundaries)(state: State, maxY: Int): Option[Int] = {
 }
 
 
-def run_n(state: State, n: Int) : State = {
-    var s = state
-    for (i <- 0 until n) {
-        s = run(s)
-    }
-    return s
+def bruteForce(boundaries: Boundaries) : Int = {
+  
+  (0 to 300).map(
+    xv => (0 to 300).map(
+      yv => run(boundaries)(State(0, 0, xv, yv), 0)
+    )
+  ).flatten.flatten.max
+}
+
+def partOne(boundaries: Boundaries) : Int = {
+  bruteForce(boundaries)
 }
 
 @main def hello: Unit = 
-  println("Hello world!")
-  println(msg)
+  val boundaries = Boundaries(217, 240, -126, -69)
+  println(partOne(boundaries))
 
-def msg = "I was compiled by Scala 3. :)"

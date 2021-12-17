@@ -24,4 +24,6 @@ class Test1:
   @Test def tRunMax(): Unit = 
     val start = State(x0, y0, 6, 9)
     assertEquals(Some(45), run(boundaries)(start, 0))
-    
+  
+  @Test def tRunBruteForce(): Unit = 
+    assertEquals(45, bruteForce(boundaries))
