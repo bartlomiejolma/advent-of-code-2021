@@ -11,7 +11,7 @@ def visualizeRiskLevels(riskLevels: RiskLevels): String = {
   val minY = riskLevels.keys.map(_._2).min
   val maxY = riskLevels.keys.map(_._2).max
 
-  val grid = (minX to maxX).map(x => (minY to maxY).map(y => riskLevels.getOrElse((x, y), 0)).mkString(" ")).mkString("\n")
+  val grid = (minX to maxX).map(x => (minY to maxY).map(y => riskLevels.getOrElse((x, y), 0)).mkString("")).mkString("\n")
 
   grid
 }
@@ -47,12 +47,6 @@ def solve(riskLevels: RiskLevels): Int =
   val visited = scala.collection.mutable.Set[Point]()
 
   while (candidates.nonEmpty) {
-    // println("------------------")
-    // println(visualizeBestPaths(bestPaths))
-    // println(visited.size)
-    // candidates.foreach(p => println(p))
-    // println(bestPaths.size)
-    // println(riskLevels.size)
     val current = candidates.head
     val currentRisk = bestPaths(current) + riskLevels(current)
     val neighbors = getNeighbors(current, riskLevels)
@@ -69,11 +63,6 @@ def solve(riskLevels: RiskLevels): Int =
       )
       .filter(n => !visited(n))
     visited += current
-    // println("------------------")
-    // println(visited.size)
-    // println(candidates.size)
-    // println(bestPaths.size)
-    // println(riskLevels.size)
     candidates = (candidates.tail ++ newCandidates).distinct
   }
 
@@ -88,7 +77,19 @@ def parseInput(text: String): RiskLevels =
     }
   }.toMap
 
-
+def expandTile(riskLevels: RiskLevels, x_tile: Int, y_tile: Int): RiskLevels = {
+  val maxY = 1 + riskLevels.keys.map(_._2).max
+  val maxX = 1 + riskLevels.keys.map(_._1).max
+  riskLevels.map { case (point, risk) =>
+    val newRisk = risk + x_tile + y_tile 
+    val newPoint = (point._1 + x_tile * maxX , point._2 + y_tile * maxY)
+    (newPoint, if (newRisk >= 10) newRisk - 9 else newRisk)
+  }
+}
+def expand(riskLevels: RiskLevels, times: Int = 5): RiskLevels = {
+  (0 to times - 1).map(
+    x => (0 to times - 1).map(y => expandTile(riskLevels, x, y)).flatten.toMap).flatten.toMap
+}
 def partOne(text: String): Int = {
   val riskLevels = parseInput(text)
 
@@ -97,6 +98,15 @@ def partOne(text: String): Int = {
   solve(riskLevels)
 }
 
+def partTwo(text: String): Int = {
+  val riskLevels = parseInput(text)
+  val expandedRiskLevels = expand(riskLevels, 5)
+  println(visualizeRiskLevels(expandedRiskLevels))
+
+  solve(expandedRiskLevels)
+}
+
 @main def hello: Unit = 
   val text = Source.fromFile(filename).mkString
   println(partOne(text))
+  println(partTwo(text))
